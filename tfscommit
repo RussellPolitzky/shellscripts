@@ -1,0 +1,6 @@
+#!/bin/sh
+
+"C:\Users\Russell.Politzky\bin\vpnon"
+#git tfs ct
+git tfs ct
+"C:\Users\Russell.Politzky\bin\vpnoff"

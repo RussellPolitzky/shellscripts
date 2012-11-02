@@ -1,0 +1,5 @@
+#!/bin/sh
+
+"C:/Users/Russell.Politzky/bin/vpnon"
+git tfs pull
+"C:/Users/Russell.Politzky/bin/vpnoff"

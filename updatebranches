@@ -1,0 +1,140 @@
+#!/bin/sh
+
+# -----------------------------------------------------------------------------
+# Note that this script assumes that you've comitted any changes to your current
+# branch.  Make sure your current branch is clean before running it.
+# -----------------------------------------------------------------------------
+
+
+# --------------------------------
+# Exit on fail.
+# --------------------------------
+function exit_on_fail {
+  if [[ "$?" == "0" ]]
+  then
+     echo $1 "succeeded"
+  else
+     echo $1 "failed!"
+     exit 1
+  fi
+}
+
+
+# ---------------------------------
+# Merge a given branch with develop
+# ---------------------------------
+function merge_branch {
+  echo
+  git checkout $1
+  exit_on_fail 'checkout'
+  git merge develop
+  exit_on_fail 'merge develop'
+}
+
+
+# ----------------------------------------
+# check the current branch to determine
+# Whether or not to continue.  Will only
+# continue if the branch is clean.
+# ----------------------------------------
+function check_current_branch() {
+  if [[ `git status` != *clean* ]]
+  then
+      echo "The current $currentBranch branch is dirty.  Please commit any changes before continuing."
+      exit 1
+  else
+      echo "Current branch is clean.  Continuing ..."
+  fi
+}
+
+
+# -----------------------------------------------
+# Gets the current Git branch
+# -----------------------------------------------
+function get_current_branch {
+  onBranch=`git status | grep On\ branch\ `
+  currentBranch=`expr match "$onBranch" '.*\(\ .*\)'`
+  echo "$currentBranch"
+}
+
+
+# -----------------------------------------------
+# Prints the SHA for the given branch.
+# -----------------------------------------------
+function echo_sha_for_branch {
+   commit=`git log -n 1 $1 | grep commit`
+   echo "Branch $1 is currently pointing to: $commit"
+}
+
+
+# ------------------------------------------------------------------------------
+# ------                               Entry                               -----
+# ------------------------------------------------------------------------------
+
+echo
+echo Version 0.5
+echo
+echo "-------------------------------------------------------------------------"
+date
+echo "-------------------------------------------------------------------------"
+
+
+currentBranch=$(get_current_branch)
+echo "Current Branch is : $currentBranch"
+
+echo
+echo "Starting source tree update."
+echo
+
+# ------------------------------------------------------
+# Add a log entry with the SHA 1 so that we can recover
+# if there's an issue along the way.
+# ------------------------------------------------------
+echo "Opening log entry to follow:"
+echo
+git log -n 1
+echo
+
+check_current_branch()
+
+# Turn on the vpn
+vpnon
+
+# Get the latest from tfs
+git fetch tfs/default
+exit_on_fail 'git fetch tfs/default'
+
+# Turn on the vpn off
+vpnoff
+
+# Ensure that master's clean.
+git checkout master
+exit_on_fail 'git checkout master'
+git reset --hard tfs/default
+exit_on_fail 'git reset --hard tfs/default'
+
+localBranches=`git branch`
+
+#----------------------------------------
+# Echo current shas for all branches.
+#----------------------------------------
+for localBranch in $localBranches
+do
+  echo_sha_for_branch $localBranch
+done
+
+#----------------------------------------
+# checkout local branches and merge them
+#----------------------------------------
+for localBranch in $localBranches
+do
+  merge_branch $localBranch
+done
+
+# finally, go back to current branch.
+git checkout $currentBranch
+
+echo
+echo "All branches have been updated."
+echo
+

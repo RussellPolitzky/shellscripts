@@ -1,0 +1,3 @@
+#!/bin/sh
+
+echo 'c:\windows\system32\rasdial.exe "MC Vpn" /disconnect' | cmd

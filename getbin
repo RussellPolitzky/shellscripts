@@ -1,0 +1,7 @@
+"C:\Users\Russell.Politzky\bin\vpnon"
+cd "C:\srce\FEF\Binaries"
+git tfs pull
+cd "C:\srce\FEF\Source"
+"C:\Users\Russell.Politzky\bin\vpnoff"
+
+

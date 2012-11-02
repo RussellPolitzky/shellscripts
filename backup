@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# "C:/Users/Russell.Politzky/bin/vpnon"
+
+backupPath="//03rnb-fsuid01.za.ds.naspers.com/RussellBackup"
+currentDate=`date +"%y-%m-%d_%H-%M"`
+archiveName="FefBackup_$currentDate".zip
+fullArchiveName="$backupPath/$archiveName"
+"C:\Program Files\7-Zip\7z.exe" a -r -tzip BACKUP "C:\srce\FEF\Source\.git\*"
+mv BACKUP.zip "$fullArchiveName"
+
+# Show the backup 
+ls -l $backupPath
+
+
+#"C:/Users/Russell.Politzky/bin/voff"
+
+
